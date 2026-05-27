@@ -31,9 +31,9 @@ report the result.
 - **Auth:** EVERY request sends the header `X-API-Key`, value from the env
   var `AI_CALL_AGENT_API_KEY`. NEVER print or echo the key value; always
   reference it as `$AI_CALL_AGENT_API_KEY` in shell commands.
-- **Test rule:** during testing only ever dial **`+37441467478`**. A real
-  call costs credits and rings a real phone — only call when explicitly
-  asked.
+- **Test rule:** during testing only dial a number you control (your own
+  test phone). A real call costs credits and rings a real phone — only call
+  when explicitly asked.
 
 Quick connectivity check: `GET /users/me` →
 ```sh
@@ -48,7 +48,7 @@ The bot reads a natural-language `brief` and improvises the conversation.
 ```sh
 curl -s -X POST http://gw.vox-bot.live/calls \
   -H "X-API-Key: $AI_CALL_AGENT_API_KEY" -H "Content-Type: application/json" \
-  -d '{"target_phone":"+37441467478","brief":"<what to say/do, in the call language>","language":"ru"}'
+  -d '{"target_phone":"+15551234567","brief":"<what to say/do, in the call language>","language":"ru"}'
 ```
 Body: `target_phone` (E.164), `brief` (natural-language task), `language`
 (`ru` / `en` / `auto`). Returns a `2xx` with `call_id`: either `201` (dialing
@@ -67,7 +67,7 @@ instead of dialing again.
 curl -s -X POST http://gw.vox-bot.live/skills/restaurant-reservation/run \
   -H "X-API-Key: $AI_CALL_AGENT_API_KEY" -H "Content-Type: application/json" \
   -H "Idempotency-Key: $(python -c 'import uuid;print(uuid.uuid4())')" \
-  -d '{"restaurant_phone":"+37441467478","party_size":2,"date":"2026-05-30","time":"20:00","name":"Frunze","phone_to_dictate":"094467478","language":"ru"}'
+  -d '{"restaurant_phone":"+15551234567","party_size":2,"date":"2026-05-30","time":"20:00","name":"Alex","phone_to_dictate":"+15551230000","language":"ru"}'
 ```
 Fields: `restaurant_phone`, `party_size`, `date` (`YYYY-MM-DD`), `time`
 (`HH:MM`), `name`, `phone_to_dictate`, `language`.

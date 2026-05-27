@@ -73,14 +73,14 @@ Verify: `curl -s -H "X-API-Key: $AI_CALL_AGENT_API_KEY" http://gw.vox-bot.live/u
 
 Start a new session and ask in natural language, e.g.:
 
-> "Call +37441467478 and book a table for 2 tomorrow at 8pm, name Frunze,
-> my contact 094467478."
+> "Call +15551234567 and book a table for 2 tomorrow at 8pm, name Alex,
+> my contact +15551230000."
 
 The agent loads `ai-call-agent`, places the call, follows the live event
 stream, answers any mid-call question in the terminal, and reports the outcome.
 
-> **Test safety:** while testing, only `+37441467478` is dialed (stated in
-> `SKILL.md`). Real calls cost credits and ring a real phone.
+> **Test safety:** while testing, only dial a number you control (your own
+> test phone, as stated in `SKILL.md`). Real calls cost credits and ring a real phone.
 
 See [`ai-call-agent/README.md`](ai-call-agent/README.md) for full per-agent
 details, the fallback (system-prompt / MCP) options, and distribution notes.
