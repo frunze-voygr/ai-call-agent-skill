@@ -1,0 +1,14 @@
+# Python bytecode caches — scripts compile on first run, never check in.
+__pycache__/
+*.py[cod]
+*$py.class
+
+# Local editor / OS junk
+.DS_Store
+Thumbs.db
+.vscode/
+.idea/
+
+# Local env files — keys live in the user's shell, never in the repo.
+.env
+.env.local

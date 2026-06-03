@@ -50,7 +50,7 @@ setx AI_CALL_AGENT_API_KEY "pk_live_..."        # Windows, persistent — restar
 ```sh
 export AI_CALL_AGENT_API_KEY="pk_live_..."      # macOS/Linux: add to ~/.bashrc / ~/.zshrc
 ```
-Verify: `curl -s -H "X-API-Key: $AI_CALL_AGENT_API_KEY" http://gw.vox-bot.live/users/me` → `200`.
+Verify: `curl -s -H "X-API-Key: $AI_CALL_AGENT_API_KEY" https://gw.vox-bot.live/users/me` → `200`.
 
 > **OpenClaw note:** OpenClaw runs a long-lived Gateway. Start it from a
 > terminal where `AI_CALL_AGENT_API_KEY` (and `ANTHROPIC_API_KEY` for its
@@ -100,7 +100,32 @@ convention:
 
 ---
 
+## What's new in 2.1.0
+
+- **Auto-download recordings to local disk.** Two helper scripts in
+  `scripts/` (pure stdlib Python, Windows-friendly):
+  - `fetch_recording.py <call_id> <output_path>` — one-shot download
+    of the mp3. Exits `75` if Twilio is still processing.
+  - `wait_and_fetch_recording.py <call_id> <output_path> [timeout]` —
+    smart variant. Opens the SSE event stream, waits for the call's
+    `outcome` then `recording_ready`, then downloads with retries.
+
+  Example prompt that uses the smart variant end-to-end:
+  > "Book +15551234567 for tonight 8pm, party 2, name Alex. Save the
+  > recording to `~/Downloads/test.mp3` when the call ends."
+
+- **Gateway is now HTTPS** (`https://gw.vox-bot.live`) by default.
+  Override with the env var `AI_CALL_AGENT_BASE_URL` for staging /
+  local dev. **Upgrade note:** if you previously set
+  `AI_CALL_AGENT_BASE_URL=http://gw.vox-bot.live` to match the old
+  default, **remove the override** — the gateway now rejects plain
+  HTTP and the default already points at HTTPS.
+
+- Tags extended with `recording, audio` for skill discovery on agents
+  that route by capability.
+
 ## Notes
-- **Base URL** in `SKILL.md` is `http://gw.vox-bot.live` (test gateway,
-  HTTP only). For production, swap it for the prod gateway in the
-  `Connection` section + update the test-number rule.
+- **Base URL** in `SKILL.md` is `https://gw.vox-bot.live` (HTTPS at the
+  edge). For staging / local dev set `AI_CALL_AGENT_BASE_URL` in the
+  environment — the bundled scripts honour it; for `curl` examples
+  use `$AI_CALL_AGENT_BASE_URL` in place of the hard-coded host.

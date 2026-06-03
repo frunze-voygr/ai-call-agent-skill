@@ -61,7 +61,7 @@ setx AI_CALL_AGENT_API_KEY "pk_live_..."        # Windows, persistent — restar
 ```sh
 export AI_CALL_AGENT_API_KEY="pk_live_..."      # macOS/Linux: add to ~/.bashrc / ~/.zshrc
 ```
-Verify: `curl -s -H "X-API-Key: $AI_CALL_AGENT_API_KEY" http://gw.vox-bot.live/users/me` → `200`.
+Verify: `curl -s -H "X-API-Key: $AI_CALL_AGENT_API_KEY" https://gw.vox-bot.live/users/me` → `200`.
 
 > **OpenClaw note:** it runs a long-lived gateway — start it from a terminal
 > where `AI_CALL_AGENT_API_KEY` (and `ANTHROPIC_API_KEY`, used in `api_key`
