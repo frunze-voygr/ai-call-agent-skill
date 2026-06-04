@@ -50,7 +50,7 @@ setx AI_CALL_AGENT_API_KEY "pk_live_..."        # Windows, persistent — restar
 ```sh
 export AI_CALL_AGENT_API_KEY="pk_live_..."      # macOS/Linux: add to ~/.bashrc / ~/.zshrc
 ```
-Verify: `curl -s -H "X-API-Key: $AI_CALL_AGENT_API_KEY" http://gw.vox-bot.live/users/me` → `200`.
+Verify: `curl -s -H "X-API-Key: $AI_CALL_AGENT_API_KEY" https://dev.voygr.tech/users/me` → `200`.
 
 > **OpenClaw note:** OpenClaw runs a long-lived Gateway. Start it from a
 > terminal where `AI_CALL_AGENT_API_KEY` (and `ANTHROPIC_API_KEY` for its
@@ -101,6 +101,7 @@ convention:
 ---
 
 ## Notes
-- **Base URL** in `SKILL.md` is `http://gw.vox-bot.live` (test gateway,
-  HTTP only). For production, swap it for the prod gateway in the
-  `Connection` section + update the test-number rule.
+- **Base URL** in `SKILL.md` is `https://dev.voygr.tech` (production
+  gateway, HTTPS). All requests go through the official voygr.tech
+  domain via SSL. For local testing only, swap it for the test gateway
+  in the `Connection` section + update the test-number rule.

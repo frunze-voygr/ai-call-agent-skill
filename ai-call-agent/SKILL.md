@@ -1,8 +1,8 @@
 ---
 name: ai-call-agent
 description: Use WHENEVER the user wants to make a phone call, call a number, book or cancel a restaurant reservation by phone, check a call's status/outcome, or answer a question the call bot asked mid-call. Places REAL outbound voice calls via the AI Call Agent REST API and follows call events. Always consult this skill before saying you cannot make calls.
-version: 2.0.0
-author: Frunze
+version: 2.0.1
+author: voygr-tech
 license: MIT
 platforms: [linux, macos, windows]
 metadata:
@@ -26,8 +26,7 @@ report the result.
 
 ## Connection
 
-- **Base URL:** `http://gw.vox-bot.live` (HTTP only — force `http://`, not
-  https).
+- **Base URL:** `https://dev.voygr.tech` (HTTPS).
 - **Auth:** EVERY request sends the header `X-API-Key`, value from the env
   var `AI_CALL_AGENT_API_KEY`. NEVER print or echo the key value; always
   reference it as `$AI_CALL_AGENT_API_KEY` in shell commands.
@@ -37,7 +36,7 @@ report the result.
 
 Quick connectivity check: `GET /users/me` →
 ```sh
-curl -s -H "X-API-Key: $AI_CALL_AGENT_API_KEY" http://gw.vox-bot.live/users/me
+curl -s -H "X-API-Key: $AI_CALL_AGENT_API_KEY" https://dev.voygr.tech/users/me
 # 200 {"customer_id":"...","quota_limit":...,...}
 ```
 
@@ -46,7 +45,7 @@ curl -s -H "X-API-Key: $AI_CALL_AGENT_API_KEY" http://gw.vox-bot.live/users/me
 ### 1. Place a free-form call — `POST /calls`
 The bot reads a natural-language `brief` and improvises the conversation.
 ```sh
-curl -s -X POST http://gw.vox-bot.live/calls \
+curl -s -X POST https://dev.voygr.tech/calls \
   -H "X-API-Key: $AI_CALL_AGENT_API_KEY" -H "Content-Type: application/json" \
   -d '{"target_phone":"+15551234567","brief":"<what to say/do, in the call language>","language":"ru"}'
 ```
@@ -64,7 +63,7 @@ Validated input + idempotency. Send a fresh `Idempotency-Key` header (a
 UUID) per real attempt — replaying the same key returns the stored result
 instead of dialing again.
 ```sh
-curl -s -X POST http://gw.vox-bot.live/skills/restaurant-reservation/run \
+curl -s -X POST https://dev.voygr.tech/skills/restaurant-reservation/run \
   -H "X-API-Key: $AI_CALL_AGENT_API_KEY" -H "Content-Type: application/json" \
   -H "Idempotency-Key: $(python -c 'import uuid;print(uuid.uuid4())')" \
   -d '{"restaurant_phone":"+15551234567","party_size":2,"date":"2026-05-30","time":"20:00","name":"Alex","phone_to_dictate":"+15551230000","language":"ru"}'
@@ -83,7 +82,7 @@ Fields: `restaurant_phone`, `party_size`, `date` (`YYYY-MM-DD`), `time`
 ### 3. Cancel a booking — `POST /skills/cancel-booking/run`
 Calls the venue to cancel an existing booking you hold.
 ```sh
-curl -s -X POST http://gw.vox-bot.live/skills/cancel-booking/run \
+curl -s -X POST https://dev.voygr.tech/skills/cancel-booking/run \
   -H "X-API-Key: $AI_CALL_AGENT_API_KEY" -H "Content-Type: application/json" \
   -H "Idempotency-Key: $(python -c 'import uuid;print(uuid.uuid4())')" \
   -d '{"booking_id":"<id from the list below>","language":"ru"}'
@@ -94,7 +93,7 @@ Errors: `404 booking_not_found`, `409 booking_not_cancellable` (only
 ### 4. List bookings — `GET /v1/booking/bookings`
 ```sh
 curl -s -H "X-API-Key: $AI_CALL_AGENT_API_KEY" \
-  "http://gw.vox-bot.live/v1/booking/bookings?status=active"
+  "https://dev.voygr.tech/v1/booking/bookings?status=active"
 ```
 Optional `?status=active|pending_user_confirm|past|cancelled&limit=N`.
 A successful call (free-form OR structured) auto-creates a booking row here
@@ -128,7 +127,7 @@ something or the call ends:**
 ID=<call_id>; LAST=0; STOP=$(($(date +%s)+90))
 while [ "$(date +%s)" -lt "$STOP" ]; do
   OUT=$(curl -s --max-time 5 -H "X-API-Key: $AI_CALL_AGENT_API_KEY" \
-        -H "Last-Event-ID: $LAST" "http://gw.vox-bot.live/calls/$ID/events")
+        -H "Last-Event-ID: $LAST" "https://dev.voygr.tech/calls/$ID/events")
   [ -n "$OUT" ] && echo "$OUT"
   N=$(printf '%s' "$OUT" | sed -n 's/^id: //p' | tail -1); [ -n "$N" ] && LAST=$N
   printf '%s' "$OUT" | grep -q '^event: ask_user' && { echo "### ASK_USER — answer now ###"; break; }
@@ -154,7 +153,7 @@ Event types (in the `data:` JSON):
 
 ### Answer a mid-call question — `POST /calls/{call_id}/answer`
 ```sh
-curl -s -X POST http://gw.vox-bot.live/calls/<call_id>/answer \
+curl -s -X POST https://dev.voygr.tech/calls/<call_id>/answer \
   -H "X-API-Key: $AI_CALL_AGENT_API_KEY" -H "Content-Type: application/json" \
   -d '{"request_id":"<from the ask_user data>","answer":"<your answer, in the call language>"}'
 ```
